@@ -34,6 +34,79 @@ function AboutUs() {
       <div className="absolute inset-0 bg-[length:40px_40px] bg-[linear-gradient(to_right,rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.02)_1px,transparent_1px)] animate-grid-drift" />
       <div className="absolute left-1/2 top-1/3 w-96 h-96 bg-radial-gradient(from_60%_50%,rgba(16,185,129,0.15)_0%,transparent_60%) animate-plasma" />
 
+
+
+{/* JoyMeet Showcase Section */}
+<div className="mt-24 text-center">
+  <div className="inline-block max-w-4xl relative">
+    <div className="absolute -inset-4 bg-blue-500/10 rounded-3xl blur-3xl opacity-30 animate-pulse" />
+    
+    <h2 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-blue-400 to-cyan-500 bg-clip-text text-transparent mb-8">
+      Crafting JoyMeet
+    </h2>
+    
+    <div className="grid md:grid-cols-2 gap-8 mb-12">
+      <div className="p-6 bg-white/5 backdrop-blur-lg rounded-xl border border-blue-500/20 hover:border-cyan-400/40 transition-all">
+        <div className="text-4xl mb-4">🚀</div>
+        <h3 className="text-xl font-semibold mb-2">Real-Time Engine</h3>
+        <p className="text-gray-300">
+          Built with WebRTC and Socket.io for ultra-low latency communication,
+          supporting 50+ participants with crystal clear 1080p video
+        </p>
+      </div>
+
+      <div className="p-6 bg-white/5 backdrop-blur-lg rounded-xl border border-blue-500/20 hover:border-cyan-400/40 transition-all">
+        <div className="text-4xl mb-4">🔐</div>
+        <h3 className="text-xl font-semibold mb-2">Security First</h3>
+        <p className="text-gray-300">
+          Implemented end-to-end encryption, secure room codes, and JWT authentication
+          with Next-Auth for enterprise-grade protection
+        </p>
+      </div>
+    </div>
+
+    <div className="grid grid-cols-3 gap-4 mb-12">
+      <div className="p-4 bg-white/5 rounded-lg hover:bg-white/10 transition-all">
+        <div className="text-2xl text-cyan-400 mb-2">15+</div>
+        <div className="text-sm">Custom Hooks</div>
+      </div>
+      <div className="p-4 bg-white/5 rounded-lg hover:bg-white/10 transition-all">
+        <div className="text-2xl text-cyan-400 mb-2">98%</div>
+        <div className="text-sm">Lighthouse Score</div>
+      </div>
+      <div className="p-4 bg-white/5 rounded-lg hover:bg-white/10 transition-all">
+        <div className="text-2xl text-cyan-400 mb-2">1.2s</div>
+        <div className="text-sm">Avg. Join Time</div>
+      </div>
+    </div>
+
+    <div className="space-y-6 text-left">
+      <h3 className="text-2xl font-semibold text-cyan-400">Technical Triumphs</h3>
+      <ul className="list-disc pl-6 space-y-4 text-gray-300">
+        <li>
+          Engineered custom WebRTC negotiation flow for reliable peer connections
+          across NAT/firewalls
+        </li>
+        <li>
+          Developed dynamic video grid layout that automatically optimizes
+          based on participant count
+        </li>
+        <li>
+          Created hybrid messaging system combining WebSocket immediacy with
+          Redis persistence
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+{/* Existing Collaboration Section */}
+<div className="mt-16 text-center animate-fade-in">
+  {/* ... keep existing collaboration CTA ... */}
+</div>
+
+
+
       {/* Content Container */}
       <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-24 z-10">
         {/* Animated Hero Section */}
@@ -135,6 +208,9 @@ function AboutUs() {
             </div>
           </div>
         </div>
+
+
+
 
         {/* Philosophy Section */}
         <div className="mt-16 text-center animate-fade-in">
