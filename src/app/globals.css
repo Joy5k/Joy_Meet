@@ -1,0 +1,60 @@
+@import "tailwindcss";
+
+
+        @keyframes particle-flow {
+          0% { transform: translateY(100vh) scale(0.5); opacity: 0; }
+          20% { opacity: 0.8; }
+          80% { opacity: 0.8; }
+          100% { transform: translateY(-100vh) scale(1.2); opacity: 0; }
+        }
+
+        @keyframes grid-drift {
+          0% { background-position: 0 0; }
+          100% { background-position: 40px 40px; }
+        }
+
+        @keyframes plasma {
+          0% { transform: translate(-50%, -50%) scale(1) rotate(0deg); }
+          50% { transform: translate(-50%, -50%) scale(1.2) rotate(180deg); }
+          100% { transform: translate(-50%, -50%) scale(1) rotate(360deg); }
+        }
+
+        @keyframes quantum-glow {
+          0%, 100% { text-shadow: 0 0 20px rgba(34,211,238,0); }
+          50% { text-shadow: 0 0 40px rgba(34,211,238,0.3); }
+        }
+
+        @keyframes core-pulse {
+          0%, 100% { opacity: 0.2; }
+          50% { opacity: 0.4; }
+        }
+
+        @keyframes data-stream {
+          0% { transform: translateY(0); }
+          100% { transform: translateY(-50%); }
+        }
+
+        .animate-particle-flow {
+          animation: particle-flow linear infinite;
+        }
+
+        .animate-grid-drift {
+          animation: grid-drift 40s linear infinite;
+        }
+
+        .animate-plasma {
+          animation: plasma 20s ease-in-out infinite;
+        }
+
+        .animate-quantum-glow {
+          animation: quantum-glow 4s ease-in-out infinite;
+        }
+
+        .animate-core-pulse {
+          animation: core-pulse 6s ease-in-out infinite;
+        }
+
+        .animate-data-stream {
+          animation: data-stream 120s linear infinite;
+        }
+   
