@@ -1,12 +1,51 @@
 'use client'
 
-import React from 'react'
+import React, { useState } from 'react'
 import { FiGithub, FiLinkedin, FiMail } from 'react-icons/fi'
+import emailjs from '@emailjs/browser'
 
 function ContactUs() {
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const [name, setName] = useState('')
+  const [email, setEmail] = useState('')
+  const [message, setMessage] = useState('')
+  const [isLoading, setIsLoading] = useState(false)
+  const [successMessage, setSuccessMessage] = useState('')
+  const [errorMessage, setErrorMessage] = useState('')
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    // Add your form submission logic here
+    setIsLoading(true)
+    setErrorMessage('')
+    setSuccessMessage('')
+
+    try {
+      const templateParams = {
+        from_name: name,
+        from_email: email,
+        message: message,
+      }
+
+      const response = await emailjs.send(
+        process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID!,
+        process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID!,
+        templateParams,
+        process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY!
+      )
+
+      if (response.status === 200) {
+        setSuccessMessage('Message sent successfully!')
+        setName('')
+        setEmail('')
+        setMessage('')
+        setTimeout(() => setSuccessMessage(''), 5000)
+      }
+    } catch (error) {
+      console.error('Failed to send message:', error)
+      setErrorMessage('Failed to send message. Please try again.')
+      setTimeout(() => setErrorMessage(''), 5000)
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   return (
@@ -27,6 +66,18 @@ function ContactUs() {
           </p>
         </div>
 
+        {/* Status Messages */}
+        {successMessage && (
+          <div className="mb-8 p-4 bg-green-500/20 rounded-xl border border-green-500/40 text-green-300">
+            {successMessage}
+          </div>
+        )}
+        {errorMessage && (
+          <div className="mb-8 p-4 bg-red-500/20 rounded-xl border border-red-500/40 text-red-300">
+            {errorMessage}
+          </div>
+        )}
+
         {/* Contact Grid */}
         <div className="grid md:grid-cols-2 gap-12">
           {/* Contact Form */}
@@ -36,6 +87,8 @@ function ContactUs() {
                 type="text"
                 id="name"
                 required
+                value={name}
+                onChange={(e) => setName(e.target.value)}
                 className="w-full p-4 bg-white/5 backdrop-blur-lg rounded-xl border border-cyan-500/20 focus:border-cyan-400/40 outline-none transition-all"
                 placeholder=" "
               />
@@ -52,6 +105,8 @@ function ContactUs() {
                 type="email"
                 id="email"
                 required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 className="w-full p-4 bg-white/5 backdrop-blur-lg rounded-xl border border-cyan-500/20 focus:border-cyan-400/40 outline-none transition-all"
                 placeholder=" "
               />
@@ -67,6 +122,8 @@ function ContactUs() {
               <textarea
                 id="message"
                 required
+                value={message}
+                onChange={(e) => setMessage(e.target.value)}
                 rows={5}
                 className="w-full p-4 bg-white/5 backdrop-blur-lg rounded-xl border border-cyan-500/20 focus:border-cyan-400/40 outline-none transition-all resize-none"
                 placeholder=" "
@@ -81,9 +138,12 @@ function ContactUs() {
 
             <button
               type="submit"
-              className="w-full py-4 bg-gradient-to-r from-cyan-600 to-blue-700 text-white font-semibold rounded-xl hover:scale-[1.02] hover:shadow-2xl transition-all duration-300 relative overflow-hidden"
+              disabled={isLoading}
+              className="w-full py-4 bg-gradient-to-r from-cyan-600 to-blue-700 text-white font-semibold rounded-xl hover:scale-[1.02] hover:shadow-2xl transition-all duration-300 relative overflow-hidden disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              <span className="relative z-10">Send Message</span>
+              <span className="relative z-10">
+                {isLoading ? 'Sending...' : 'Send Message'}
+              </span>
               <div className="absolute inset-0 bg-[linear-gradient(45deg,transparent_25%,rgba(255,255,255,0.1)_50%,transparent_75%)] bg-[length:250%_250%] animate-shine" />
             </button>
           </form>
@@ -94,7 +154,7 @@ function ContactUs() {
             <h2 className="text-3xl font-bold text-cyan-400 mb-8 relative z-10">Other Channels</h2>
             <div className="space-y-6 relative z-10">
               <a
-                href="https://github.com/yourusername"
+                href="https://github.com/Joy5k"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center gap-4 p-5 bg-white/5 rounded-xl hover:bg-white/10 transition-all duration-300 hover:-translate-y-1 shadow-lg hover:shadow-cyan-500/20"
@@ -105,7 +165,7 @@ function ContactUs() {
               </a>
               
               <a
-                href="https://linkedin.com/in/yourusername"
+                href="https://www.linkedin.com/in/eng-mehedi-hasan-joy"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center gap-4 p-5 bg-white/5 rounded-xl hover:bg-white/10 transition-all duration-300 hover:-translate-y-1 shadow-lg hover:shadow-cyan-500/20"
@@ -116,7 +176,7 @@ function ContactUs() {
               </a>
               
               <a
-                href="mailto:your.email@example.com"
+                href="mailto:mmehedihasanjoyv@gmail.com"
                 className="flex items-center gap-4 p-5 bg-white/5 rounded-xl hover:bg-white/10 transition-all duration-300 hover:-translate-y-1 shadow-lg hover:shadow-cyan-500/20"
               >
                 <FiMail className="w-8 h-8 text-cyan-400 flex-shrink-0 transition-transform duration-300 hover:scale-110" />
