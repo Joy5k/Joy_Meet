@@ -25,13 +25,12 @@ A cutting-edge video conferencing solution built with Next.js 13+, featuring ent
 |-------------------------|-------------------------------------|
 | Framework               | Next.js 13 (App Router)             |
 | UI Library              | React 18 + TypeScript               |
-| Styling                 | Tailwind CSS + Shadcn/ui            |
+| Styling                 | Tailwind CSS           |
 | Real-Time Communication | WebRTC + Socket.io                  |
-| Authentication          | Next-Auth + OAuth 2.1               |
-| Database                | PostgreSQL + Prisma ORM             |
+| Authentication          | Next-Auth               |
+| Database                | MongoDB + Mongoose             |
 | Media Processing        | FFmpeg + MediaSoup                  |
 | Deployment              | Vercel + AWS S3                     |
-| Monitoring              | Prometheus + Grafana                |
 
 ## 🚀 Getting Started
 
