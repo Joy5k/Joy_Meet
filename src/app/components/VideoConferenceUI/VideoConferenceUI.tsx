@@ -1,47 +1,95 @@
 'use client'
 import { Dialog, Transition } from '@headlessui/react'
-import { Fragment, useState } from 'react'
+import { Fragment, useState, useRef, useEffect } from 'react'
 import { motion } from 'framer-motion'
 
 function VideoConferenceUI() {
   const [isStartOpen, setIsStartOpen] = useState(false)
   const [isJoinOpen, setIsJoinOpen] = useState(false)
   const [meetingId, setMeetingId] = useState('')
-  const [screens, setScreens] = useState<MediaDeviceInfo[]>([])
-  const [selectedScreen, setSelectedScreen] = useState<string>('')
+  const [screenStream, setScreenStream] = useState<MediaStream | null>(null)
+  const [sharingError, setSharingError] = useState<string | null>(null)
+  const videoRef = useRef<HTMLVideoElement>(null)
 
-  const getScreens = async () => {
+  // Handle video element setup
+  useEffect(() => {
+    if (videoRef.current && screenStream) {
+      videoRef.current.srcObject = screenStream
+    }
+  }, [screenStream])
+
+  // Cleanup streams on unmount
+  useEffect(() => {
+    return () => {
+      screenStream?.getTracks().forEach(track => track.stop())
+    }
+  }, [screenStream])
+
+  const startScreenShare = async () => {
     try {
-      const devices = await navigator.mediaDevices.enumerateDevices()
-      const screens = devices.filter(device => device.kind === 'videoinput')
-      setScreens(screens)
+      setSharingError(null)
+      
+      const stream = await navigator.mediaDevices.getDisplayMedia({
+        video: {
+          displaySurface: 'monitor', // Can be 'monitor', 'window', or 'browser'
+          // cursor: 'always' // 'always' | 'motion' | 'never'
+        },
+        audio: false
+      })
+
+      // Handle track ended event (user stops sharing)
+      stream.getVideoTracks()[0].addEventListener('ended', () => {
+        setScreenStream(null)
+        setIsStartOpen(false)
+      })
+
+      setScreenStream(stream)
+      setIsStartOpen(false) // Close modal after successful share
     } catch (error) {
-      console.error('Error accessing media devices:', error)
+      console.error('Screen sharing error:', error)
+      setSharingError(error instanceof Error ? error.message : 'Failed to start screen sharing')
+      setScreenStream(null)
     }
   }
 
-  const handleStartMeeting = async () => {
-    try {
-      const stream = await navigator.mediaDevices.getDisplayMedia({
-        video: { displaySurface: 'monitor' },
-        audio: false
-      })
-      console.log(stream)
-      // Handle the screen sharing stream here
-    } catch (error) {
-      console.error('Screen sharing error:', error)
-    }
+  const stopScreenShare = () => {
+    screenStream?.getTracks().forEach(track => track.stop())
+    setScreenStream(null)
   }
 
   return (
     <div className="relative">
+      {/* Screen Sharing Preview */}
+      {screenStream && (
+        <div className="fixed bottom-4 right-4 z-[1000] bg-gray-900 rounded-lg shadow-2xl overflow-hidden">
+          <div className="p-2 bg-gray-800 flex justify-between items-center">
+            <span className="text-sm text-cyan-400">Screen Sharing</span>
+            <button
+              onClick={stopScreenShare}
+              className="text-red-500 hover:text-red-400 transition-colors"
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+          <video
+            ref={videoRef}
+            autoPlay
+            muted
+            className="w-64 h-48 object-contain bg-black"
+            onContextMenu={(e) => e.preventDefault()}
+          />
+        </div>
+      )}
+
       {/* Buttons Container */}
       <div className="flex flex-col md:flex-row justify-center gap-4">
         <button 
-          onClick={() => { setIsStartOpen(true); getScreens() }}
+          onClick={() => setIsStartOpen(true)}
           className="px-8 py-4 bg-gradient-to-r from-cyan-600 to-blue-700 text-white font-semibold rounded-xl transform transition-all duration-300 hover:scale-[1.02] active:scale-95 shadow-sm hover:shadow-cyan-400/20 cursor-pointer"
         >
-          Start Free Meeting
+          {screenStream ? 'Sharing...' : 'Start Free Meeting'}
         </button>
         
         <button 
@@ -87,27 +135,36 @@ function VideoConferenceUI() {
                     Share Your Screen
                   </Dialog.Title>
 
-                  <div className="grid grid-cols-2 gap-4">
-                    {screens.map((screen) => (
+                  {sharingError && (
+                    <div className="p-4 bg-red-500/20 rounded-xl border border-red-500/40 text-red-300">
+                      {sharingError}
+                    </div>
+                  )}
+
+                  <div className="space-y-4">
+                    <div className="aspect-video bg-gray-900 rounded-xl border-2 border-dashed border-cyan-500/30 flex items-center justify-center">
+                      <svg className="w-16 h-16 text-cyan-500/50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                      </svg>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-4">
                       <button
-                        key={screen.deviceId}
-                        onClick={() => setSelectedScreen(screen.deviceId)}
-                        className={`p-6 rounded-xl border-2 transition-all duration-300 ${
-                          selectedScreen === screen.deviceId
-                            ? 'border-cyan-400 bg-cyan-500/10'
-                            : 'border-cyan-500/30 hover:border-cyan-400/50'
-                        }`}
+                        onClick={startScreenShare}
+                        className="p-6 rounded-xl border-2 border-cyan-500/30 hover:border-cyan-400/50 bg-gray-900/50 transition-all flex flex-col items-center"
                       >
-                        <div className="space-y-2">
-                          <div className="h-32 bg-gray-800 rounded-lg flex items-center justify-center">
-                            <svg className="w-12 h-12 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                            </svg>
-                          </div>
-                          <p className="text-sm font-medium text-cyan-200 truncate">{screen.label}</p>
-                        </div>
+                        <div className="text-4xl mb-2">🖥️</div>
+                        <span className="text-cyan-200">Entire Screen</span>
                       </button>
-                    ))}
+                      
+                      <button
+                        onClick={startScreenShare}
+                        className="p-6 rounded-xl border-2 border-cyan-500/30 hover:border-cyan-400/50 bg-gray-900/50 transition-all flex flex-col items-center"
+                      >
+                        <div className="text-4xl mb-2">📁</div>
+                        <span className="text-cyan-200">Application Window</span>
+                      </button>
+                    </div>
                   </div>
 
                   <div className="flex justify-end gap-3">
@@ -117,16 +174,6 @@ function VideoConferenceUI() {
                     >
                       Cancel
                     </button>
-                    <button
-                      onClick={handleStartMeeting}
-                      className="px-6 py-2 bg-cyan-500 text-white rounded-lg hover:bg-cyan-600 transition-colors flex items-center gap-2"
-                    >
-                      Start Sharing
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                      </svg>
-                    </button>
                   </div>
                 </motion.div>
               </Dialog.Panel>
@@ -134,6 +181,8 @@ function VideoConferenceUI() {
           </div>
         </Dialog>
       </Transition>
+
+
 
       {/* Join Meeting Modal */}
       <Transition appear show={isJoinOpen} as={Fragment}>

@@ -1,7 +1,9 @@
 'use client'
 
 import React, { useEffect } from 'react'
-import VideoConferenceUI from '../VideoConferenceUI/VideoConferenceUI';
+// import VideoConferenceUI from '../VideoConferenceUI/VideoConferenceUI';
+// import MeetingRoomUI from '../MeetingRoomUI/MeetingRoomUI';
+
 
 
 const data=[
@@ -42,7 +44,7 @@ function HomeComponent() {
 
       {/* Plasma Core */}
       <div className="absolute left-1/2 top-1/3 w-96 h-96 bg-radial-gradient(from_60%_50%,rgba(16,185,129,0.15)_0%,transparent_60%) animate-plasma" />
-
+ {/* <MeetingRoomUI></MeetingRoomUI> */}
       {/* Main Content */}
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 z-10">
         {/* Hero Section */}
@@ -60,7 +62,7 @@ function HomeComponent() {
               Your premium video conferencing solution
             </span>
           </p>
-{/* 
+
           <div className="flex flex-col md:flex-row justify-center gap-4">
             <button 
             
@@ -74,10 +76,11 @@ function HomeComponent() {
             >
               Join with Code
             </button>
-          </div> */}
-          
-          <VideoConferenceUI 
-        />
+          </div>
+
+        {/* screen sharing ui */}
+          {/* <VideoConferenceUI 
+        /> */}
         </div>
 
         {/* Features Grid */}
@@ -97,7 +100,6 @@ function HomeComponent() {
           ))}
         </div>
 
-       
       </div>
 
     </div>
