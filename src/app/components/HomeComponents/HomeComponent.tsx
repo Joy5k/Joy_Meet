@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useEffect } from 'react'
+import VideoConferenceUI from '../VideoConferenceUI/VideoConferenceUI';
 
 
 const data=[
@@ -12,6 +13,7 @@ const data=[
     { icon: '🎨', title: 'Custom', desc: 'Virtual backgrounds & filters' },
   ]
 function HomeComponent() {
+  
   useEffect(() => {
     const createParticles = () => {
       const container = document.querySelector('.particle-container');
@@ -58,15 +60,24 @@ function HomeComponent() {
               Your premium video conferencing solution
             </span>
           </p>
-
+{/* 
           <div className="flex flex-col md:flex-row justify-center gap-4">
-  <button className="px-8 py-4 bg-gradient-to-r from-cyan-600 to-blue-700 text-white font-semibold rounded-xl transform transition-all duration-300 hover:scale-[1.02] active:scale-95 shadow-sm hover:shadow-cyan-400/20 cursor-pointer">
-    Start Free Meeting
-  </button>
-  <button className="px-8 py-4 border-2 border-cyan-500/60 hover:border-cyan-400 text-cyan-100 font-semibold rounded-xl transform transition-all duration-300 hover:scale-[1.02] active:scale-95 shadow-sm hover:shadow-cyan-400/20 cursor-pointer">
-    Join with Code
-  </button>
-</div>
+            <button 
+            
+              className="px-8 py-4 bg-gradient-to-r from-cyan-600 to-blue-700 text-white font-semibold rounded-xl transform transition-all duration-300 hover:scale-[1.02] active:scale-95 shadow-sm hover:shadow-cyan-400/20 cursor-pointer"
+            >
+              Start Free Meeting
+            </button>
+            <button 
+           
+              className="px-8 py-4 border-2 border-cyan-500/60 hover:border-cyan-400 text-cyan-100 font-semibold rounded-xl transform transition-all duration-300 hover:scale-[1.02] active:scale-95 shadow-sm hover:shadow-cyan-400/20 cursor-pointer"
+            >
+              Join with Code
+            </button>
+          </div> */}
+          
+          <VideoConferenceUI 
+        />
         </div>
 
         {/* Features Grid */}
@@ -86,7 +97,7 @@ function HomeComponent() {
           ))}
         </div>
 
-   
+       
       </div>
 
     </div>
@@ -94,3 +105,6 @@ function HomeComponent() {
 }
 
 export default HomeComponent
+
+
+

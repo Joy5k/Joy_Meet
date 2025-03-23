@@ -9,7 +9,7 @@ function Navbar() {
 
 
                 <div className="container mx-auto flex justify-between items-center">
-                    <div className="text-white text-lg font-bold">Navbar</div>
+                    <div className=" font-bold bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent mb-6 animate-quantum-glow">Joy-Meet</div>
                     <div className="hidden md:flex space-x-4">
                         <Link href="/">
                            <li className="text-gray-300 hover:text-white">Home</li>
