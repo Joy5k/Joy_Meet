@@ -24,6 +24,7 @@ const userManagementApi = baseApi.injectEndpoints({
       },
       invalidatesTags:["users"],
     }),
+    
     updateRoleUserToSeller: builder.mutation({
       query: () => ({
         url: "/user/userToSeller",
