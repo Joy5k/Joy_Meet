@@ -23,7 +23,7 @@ A cutting-edge video conferencing solution built with Next.js 13+, featuring ent
 
 | Component               | Technology                          |
 |-------------------------|-------------------------------------|
-| Framework               | Next.js 13 (App Router)             |
+| Framework               | Next.js 15 (App Router)             |
 | UI Library              | React 18 + TypeScript               |
 | Styling                 | Tailwind CSS           |
 | Real-Time Communication | WebRTC + Socket.io                  |
