@@ -72,7 +72,7 @@ export default function MeetingRoom() {
           setPeers(peersRef.current);
         });
 
-        socketRef.current.on('connect_error', (err) => {
+        socketRef.current.on('connect_error', (err: Error) => {
           console.error('Socket connection error:', err);
           alert('Failed to connect to meeting server!');
           router.push('/');
