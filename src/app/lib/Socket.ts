@@ -1,7 +1,10 @@
 import io from 'socket.io-client';
 
-const SOCKET_URL = process.env.NEXT_PUBLIC_SOCKET_URL || 'http://localhost:5000';
-
-export const socket = io(SOCKET_URL, {
-  autoConnect: false
+export const socket = io('http://localhost:5000', {
+  path: '/api/v1/socket.io',
+  transports: ['websocket', 'polling'],
+  reconnection: true,
+  reconnectionAttempts: 5,
+  reconnectionDelay: 1000,
+  autoConnect: false 
 });

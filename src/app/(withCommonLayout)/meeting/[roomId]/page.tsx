@@ -28,38 +28,61 @@ export default function MeetingRoom() {
   const socketRef = useRef<typeof Socket | null>(null);
 
   useEffect(() => {
+    if (userVideoRef.current && localStream) {
+      userVideoRef.current.srcObject = localStream;
+    }
+  }, [localStream]);
+
+  useEffect(() => {
     const initMeeting = async () => {
-      // Connect to Socket.io
-      socketRef.current = io('http://localhost:3000');
-      
-      // Get user media
-      const stream = await navigator.mediaDevices.getUserMedia({ 
-        video: true, 
-        audio: true 
-      });
-      setLocalStream(stream);
-      
-      // Join the room
-      socketRef.current.emit('join-room', params.roomId, socketRef.current.id);
+      try {
+        // Initialize socket connection
+        socketRef.current = io('http://localhost:5000', {
+          path: '/socket.io',
+          transports: ['websocket'],
+          autoConnect: true
+        });
 
-      // Setup socket listeners
-      socketRef.current.on('user-connected', (userId:string) => {
-        const peer = createPeer(userId, stream);
-        peersRef.current = [...peersRef.current, { id: userId, peer }];
-        setPeers(peersRef.current);
-      });
+        // Get user media with error handling
+        const stream = await navigator.mediaDevices.getUserMedia({ 
+          video: { width: 1280, height: 720 },
+          audio: true 
+        });
+        setLocalStream(stream);
 
-      socketRef.current.on('signal', (fromId: string, signal: any) => {
-        const peer = peersRef.current.find(p => p.id === fromId);
-        peer?.peer.signal(signal);
-      });
+        // Join the room
+        socketRef.current.emit('join-room', params.roomId, socketRef.current.id);
 
-      socketRef.current.on('user-disconnected', (userId:string) => {
-        const peer = peersRef.current.find(p => p.id === userId);
-        peer?.peer.destroy();
-        peersRef.current = peersRef.current.filter(p => p.id !== userId);
-        setPeers(peersRef.current);
-      });
+        // Setup socket listeners
+        socketRef.current.on('user-connected', (userId: string) => {
+          const peer = createPeer(userId, stream);
+          peersRef.current = [...peersRef.current, { id: userId, peer }];
+          setPeers(peersRef.current);
+        });
+
+        socketRef.current.on('signal', (fromId: string, signal: any) => {
+          const peer = peersRef.current.find(p => p.id === fromId);
+          peer?.peer.signal(signal);
+        });
+
+        socketRef.current.on('user-disconnected', (userId: string) => {
+          const peer = peersRef.current.find(p => p.id === userId);
+          peer?.peer.destroy();
+          peersRef.current = peersRef.current.filter(p => p.id !== userId);
+          setPeers(peersRef.current);
+        });
+
+        socketRef.current.on('connect_error', (err) => {
+          console.error('Socket connection error:', err);
+          alert('Failed to connect to meeting server!');
+          router.push('/');
+        });
+
+      } catch (error) {
+        console.error('Meeting initialization error:', error);
+        alert('Camera/microphone access required!');
+        router.push('/');
+      }
     };
 
     initMeeting();
@@ -68,6 +91,7 @@ export default function MeetingRoom() {
       socketRef.current?.disconnect();
       localStream?.getTracks().forEach(track => track.stop());
       screenStream?.getTracks().forEach(track => track.stop());
+      peersRef.current.forEach(peer => peer.peer.destroy());
     };
   }, []);
 
@@ -87,6 +111,10 @@ export default function MeetingRoom() {
         p.id === userId ? { ...p, stream: remoteStream } : p
       );
       setPeers(peersRef.current);
+    });
+
+    peer.on('error', err => {
+      console.error('Peer connection error:', err);
     });
 
     return peer;
@@ -111,6 +139,14 @@ export default function MeetingRoom() {
 
       stream.getVideoTracks()[0].addEventListener('ended', () => {
         setScreenStream(null);
+        // Switch back to camera stream
+        peersRef.current.forEach(peer => {
+          peer.peer.replaceTrack(
+            peer.peer.streams[0].getVideoTracks()[0],
+            localStream?.getVideoTracks()[0]!,
+            localStream!
+          );
+        });
       });
 
       setScreenStream(stream);
@@ -142,7 +178,7 @@ export default function MeetingRoom() {
             className="w-full h-full object-cover"
           />
           <div className="absolute bottom-2 left-2 text-sm bg-gray-900/80 px-2 py-1 rounded-md">
-            You
+            You {isMuted ? '(Muted)' : ''} {!isVideoOn ? '(Camera Off)' : ''}
           </div>
         </div>
 
@@ -183,7 +219,7 @@ export default function MeetingRoom() {
 
           <motion.button
             whileHover={{ scale: 1.1 }}
-            className="p-3 rounded-full bg-gray-700"
+            className={`p-3 rounded-full ${screenStream ? 'bg-blue-500' : 'bg-gray-700'}`}
             onClick={startScreenShare}
           >
             🖥️
